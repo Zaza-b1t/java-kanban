@@ -1,5 +1,13 @@
+package TaskManager;
+
+import Task.Status;
+import Task.Subtask;
+import Task.Task;
+import Task.Epic;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class TaskManager {
     private int idCounter = 1;
@@ -134,7 +142,9 @@ public class TaskManager {
 
     private void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
-        if (epic == null) return;
+        if (epic == null) {
+            return;
+        }
 
         ArrayList<Subtask> subs = epic.getSubtasks();
         if (subs.isEmpty()) {
@@ -142,24 +152,18 @@ public class TaskManager {
             return;
         }
 
-        boolean allNew = true;
-        boolean allDone = true;
+        HashSet<Status> uniqueStatuses = new HashSet<>();
 
         for (Subtask sub : subs) {
-            if (sub.getStatus() != Status.NEW) {
-                allNew = false;
-            }
-            if (sub.getStatus() != Status.DONE) {
-                allDone = false;
-            }
+            uniqueStatuses.add(sub.getStatus());
         }
 
-        if (allDone) {
-            epic.setStatus(Status.DONE);
-        } else if (allNew) {
-            epic.setStatus(Status.NEW);
+        if (uniqueStatuses.size() == 1) {
+            Status onlyStatus = uniqueStatuses.iterator().next();
+            epic.setStatus(onlyStatus);
         } else {
             epic.setStatus(Status.IN_PROGRESS);
         }
     }
+
 }
