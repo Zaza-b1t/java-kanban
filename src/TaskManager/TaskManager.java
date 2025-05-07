@@ -5,6 +5,7 @@ import Task.Task;
 import Task.Epic;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
 
@@ -48,5 +49,5 @@ public interface TaskManager {
 
     void updateEpicStatus(int epicId);
 
-    ArrayList<Task> getHistory();
+    List<Task> getHistory();
 }

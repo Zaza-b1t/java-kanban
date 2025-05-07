@@ -5,23 +5,25 @@ import Task.Subtask;
 import Task.Task;
 import Task.Epic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int idCounter = 1;
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private final ArrayList<Task> history = new ArrayList<>();
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Subtask> subtasks = new HashMap<>();
+    private final HistoryManager history;
+
+    public InMemoryTaskManager(HistoryManager history) {
+        this.history = history;
+    }
 
     private int generateId() {
         return idCounter++;
     }
 
-    public ArrayList<Task> getHistory() {
-        return history;
+    public List<Task> getHistory() {
+        return history.getHistory();
     }
 
     @Override
@@ -36,7 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getTaskById(int id) {
         Task task = tasks.get(id);
         if(task != null) {
-            addToHistory(task);
+            history.add(task);
         }
         return task;
     }
@@ -73,7 +75,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic getEpicById(int id) {
         Epic epic = epics.get(id);
         if (epic != null) {
-            addToHistory(epic);
+            history.add(epic);
         }
         return epic;
     }
@@ -123,7 +125,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Subtask getSubtaskById(int id) {
         Subtask subtask = subtasks.get(id);
         if(subtask != null) {
-            addToHistory(subtask);
+            history.add(subtask);
         }
         return subtask;
     }
@@ -202,12 +204,4 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setStatus(Status.IN_PROGRESS);
         }
     }
-
-    private void addToHistory (Task task) {
-        if(history.size() == 10) {
-            history.remove(0);
-        }
-        history.add(task);
-    }
-
 }
