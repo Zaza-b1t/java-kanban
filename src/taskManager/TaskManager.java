@@ -1,8 +1,8 @@
-package TaskManager;
+package taskManager;
 
-import Task.Subtask;
-import Task.Task;
-import Task.Epic;
+import task.Subtask;
+import task.Task;
+import task.Epic;
 
 import java.util.ArrayList;
 import java.util.List;
