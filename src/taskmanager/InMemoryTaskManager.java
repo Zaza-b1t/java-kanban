@@ -121,8 +121,7 @@ public class InMemoryTaskManager implements TaskManager {
         int id = generateId();
 
         if (subtask.getEpicId() == id) {
-            System.out.println("Подзадача не может иметь тот же идентификатор, что и ее Эпик.");
-            return null;
+            id = generateId(); // сгенерировать другой id
         }
 
         subtask.setId(id);
