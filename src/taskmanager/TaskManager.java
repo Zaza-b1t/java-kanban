@@ -1,4 +1,4 @@
-package taskManager;
+package taskmanager;
 
 import task.Subtask;
 import task.Task;
