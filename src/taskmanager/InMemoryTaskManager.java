@@ -119,16 +119,23 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask createSubtask(Subtask subtask) {
         int id = generateId();
+
+        if (subtask.getEpicId() == id) {
+            System.out.println("Подзадача не может иметь тот же идентификатор, что и ее Эпик.");
+            return null;
+        }
+
         subtask.setId(id);
         subtasks.put(id, subtask);
 
         Epic epic = epics.get(subtask.getEpicId());
         if (epic != null) {
-            epic.addSubtaskId(id);
+            epic.addSubtaskId(subtask.getId());
             updateEpicStatus(epic.getId());
         }
         return subtask;
     }
+
 
     @Override
     public Subtask getSubtaskById(int id) {
