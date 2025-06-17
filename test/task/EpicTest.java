@@ -1,4 +1,4 @@
-package Task;
+package task;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,6 +19,7 @@ class EpicTest {
 
         Subtask subtask = new Subtask(0, "Подзадача 1.1", "Описание подзадачи 1.1", Status.NEW, epic.getId());
 
-        assertNotEquals(epic.getId(), subtask.getEpicId(), "Эпик не может быть подзадачей самого себя");
+        assertNotEquals(epic.getId(), subtask.getId(), "Эпик не может быть подзадачей самого себя");
     }
+
 }
