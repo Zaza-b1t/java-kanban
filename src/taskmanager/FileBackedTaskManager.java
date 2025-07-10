@@ -9,7 +9,7 @@ import java.util.*;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
 
-    public FileBackedTaskManager(File file) {
+    private FileBackedTaskManager(File file) {
         super(Managers.getDefaultHistory());
         this.file = file;
     }
@@ -93,7 +93,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка чтения из файла", e);
+            throw new ManagerLoadException("Ошибка чтения из файла", e);
         }
         return manager;
     }

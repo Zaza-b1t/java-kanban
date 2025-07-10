@@ -14,7 +14,7 @@ class FileBackedTaskManagerTest {
     @BeforeEach
     void setup() throws Exception {
         tempFile = File.createTempFile("tasks", ".csv");
-        manager = new FileBackedTaskManager(tempFile);
+        manager = FileBackedTaskManager.loadFromFile(tempFile);
     }
 
     @Test
