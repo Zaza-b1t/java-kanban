@@ -330,11 +330,4 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime end2 = t2.getEndTime();
         return start1.isBefore(end2) && start2.isBefore(end1);
     }
-
-
-    private boolean hasOverlap(Task newTask) {
-        return prioritizedTasks.stream()
-                .anyMatch(task -> task.getId() != newTask.getId() && isOverlap(task, newTask));
-    }
-
 }
