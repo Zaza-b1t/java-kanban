@@ -3,6 +3,8 @@ package taskmanager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.*;
+
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
 abstract class TaskManagerTest<T extends TaskManager> {
     protected T manager;
 
-    abstract T createManager();
+    abstract T createManager() throws IOException;
 
     @BeforeEach
-    void setup() {
+    void setup() throws IOException {
         manager = createManager();
     }
 

@@ -23,7 +23,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     };
 
-    private final TreeSet<Task> prioritizedTasks = new TreeSet<>(taskStartTimeComparator);
+    private final Set<Task> prioritizedTasks = new TreeSet<>(taskStartTimeComparator);
 
     public InMemoryTaskManager(HistoryManager history) {
         this.history = history;
@@ -39,10 +39,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task createTask(Task task) {
+    public Task createTask(Task task) throws TaskOverlapException {
         for (Task existing : prioritizedTasks) {
             if (isOverlap(existing, task)) {
-                throw new RuntimeException("Задачи пересекаются по времени!");
+                throw new TaskOverlapException("Задачи пересекаются по времени!");
             }
         }
         int id = generateId();
@@ -63,7 +63,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getAllTasks() {
+    public List<Task> getAllTasks() {
         return new ArrayList<>(tasks.values());
     }
 
@@ -110,7 +110,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Epic> getAllEpics() {
+    public List<Epic> getAllEpics() {
         return new ArrayList<>(epics.values());
     }
 
@@ -148,11 +148,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Subtask createSubtask(Subtask subtask) {
-        for (Task existing : prioritizedTasks) {
-            if (isOverlap(existing, subtask)) {
-                throw new RuntimeException("Задачи пересекаются по времени!");
-            }
+    public Subtask createSubtask(Subtask subtask) throws TaskOverlapException {
+        boolean overlap = prioritizedTasks.stream()
+                .anyMatch(existing -> isOverlap(existing, subtask));
+        if (overlap) {
+            throw new TaskOverlapException("Задачи пересекаются по времени!");
         }
         int id = generateId();
         subtask.setId(id);
@@ -179,7 +179,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Subtask> getAllSubtasks() {
+    public List<Subtask> getAllSubtasks() {
         return new ArrayList<>(subtasks.values());
     }
 

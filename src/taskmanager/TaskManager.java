@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface TaskManager {
 
-    Task createTask(Task task);
+    Task createTask(Task task) throws TaskOverlapException;
 
     Task getTaskById(int id);
 
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
     void deleteTaskById(int id);
 
@@ -25,7 +25,7 @@ public interface TaskManager {
 
     Epic getEpicById(int id);
 
-    ArrayList<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
     void deleteEpicById(int id);
 
@@ -33,11 +33,11 @@ public interface TaskManager {
 
     void updateEpic(Epic epic);
 
-    Subtask createSubtask(Subtask subtask);
+    Subtask createSubtask(Subtask subtask) throws TaskOverlapException;
 
     Subtask getSubtaskById(int id);
 
-    ArrayList<Subtask> getAllSubtasks();
+    List<Subtask> getAllSubtasks();
 
     void deleteSubtaskById(int id);
 
