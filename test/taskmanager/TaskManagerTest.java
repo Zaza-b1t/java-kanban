@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-abstract class TaskManagerTest<T extends TaskManager> {
+abstract class TaskManagerTest<T extends TaskManager>  {
     protected T manager;
 
     abstract T createManager() throws IOException;
@@ -22,7 +22,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void createAndGetTask_shouldReturnSameTask() {
+    void createAndGetTask_shouldReturnSameTask() throws TaskOverlapException {
         Task task = new Task(0, "Задача 1", "Описание задачи 1", Status.NEW, Duration.ofMinutes(30), LocalDateTime.now());
         manager.createTask(task);
         Task retrieved = manager.getTaskById(task.getId());
@@ -38,7 +38,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void createAndGetSubtask_shouldReturnSameSubtask() {
+    void createAndGetSubtask_shouldReturnSameSubtask() throws TaskOverlapException {
         Epic epic = new Epic(0, "Эпик 1", "Описание эпика 1");
         manager.createEpic(epic);
         Subtask subtask = new Subtask(0, "Подзадача", "Описание", Status.NEW, epic.getId(), Duration.ofMinutes(15), LocalDateTime.now());
@@ -48,7 +48,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getPrioritizedTasks_shouldReturnSortedByStartTime() {
+    void getPrioritizedTasks_shouldReturnSortedByStartTime() throws TaskOverlapException {
         Task task1 = new Task(0, "T1", "desc", Status.NEW, Duration.ofMinutes(10), LocalDateTime.of(2023, 1, 1, 10, 0));
         Task task2 = new Task(0, "T2", "desc", Status.NEW, Duration.ofMinutes(10), LocalDateTime.of(2023, 1, 1, 9, 0));
         manager.createTask(task1);
@@ -59,15 +59,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void createTask_overlap_shouldThrow() {
+    void createTask_overlap_shouldThrow() throws TaskOverlapException {
         Task task1 = new Task(0, "T1", "desc", Status.NEW, Duration.ofMinutes(30), LocalDateTime.of(2023, 1, 1, 9, 0));
         Task task2 = new Task(0, "T2", "desc", Status.NEW, Duration.ofMinutes(20), LocalDateTime.of(2023, 1, 1, 9, 15));
         manager.createTask(task1);
-        assertThrows(RuntimeException.class, () -> manager.createTask(task2));
+        assertThrows(TaskOverlapException.class, () -> manager.createTask(task2));
     }
 
     @Test
-    void epicStatus_allNew_allDone_inProgress() {
+    void epicStatus_allNew_allDone_inProgress() throws TaskOverlapException {
         Epic epic = new Epic(1, "Эпик 1", "Описание эпика 1");
         manager.createEpic(epic);
 

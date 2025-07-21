@@ -96,12 +96,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             while ((line = reader.readLine()) != null) {
                 if (line.isEmpty()) break;
                 Task task = manager.fromString(line);
-                if (task instanceof Epic) {
-                    manager.createEpic((Epic) task);
-                } else if (task instanceof Subtask) {
-                    manager.createSubtask((Subtask) task);
-                } else {
-                    manager.createTask(task);
+                try {
+                    if (task instanceof Epic) {
+                        manager.createEpic((Epic) task);
+                    } else if (task instanceof Subtask) {
+                        manager.createSubtask((Subtask) task);
+                    } else {
+                        manager.createTask(task);
+                    }
+                } catch (TaskOverlapException e) {
+                    throw new ManagerLoadException("Ошибка загрузки из файла: " + e.getMessage(), e);
                 }
             }
         } catch (IOException e) {
@@ -112,7 +116,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     @Override
-    public Task createTask(Task task) {
+    public Task createTask(Task task) throws TaskOverlapException {
         Task t = super.createTask(task);
         save();
         return t;

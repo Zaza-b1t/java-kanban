@@ -4,12 +4,13 @@ import task.Subtask;
 import task.Status;
 import taskmanager.TaskManager;
 import managers.Managers;
+import taskmanager.TaskOverlapException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TaskOverlapException {
         TaskManager manager = Managers.getDefault();
 
         Task task1 = new Task(0, "Задача 1", "Описание задачи 1", Status.NEW,
