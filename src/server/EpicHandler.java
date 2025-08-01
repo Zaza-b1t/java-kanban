@@ -21,7 +21,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
             .setPrettyPrinting()
             .create();
 
-    public EpicHandler (TaskManager taskManager) {
+    public EpicHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
     }
 
