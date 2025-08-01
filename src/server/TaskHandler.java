@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     private final TaskManager taskManager;
-    private  final Gson gson = new GsonBuilder()
+    private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .registerTypeAdapter(Duration.class, new DurationAdapter())
             .setPrettyPrinting()
@@ -34,7 +34,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
             case "GET":
                 String path = exchange.getRequestURI().getPath();
                 String[] parts = path.split("/");
-                if(parts.length == 3) {
+                if (parts.length == 3) {
                     int id = Integer.parseInt(parts[2]);
                     Task task = taskManager.getTaskById(id);
                     if (task == null) {
@@ -64,7 +64,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
             case "DELETE":
                 String paths = exchange.getRequestURI().getPath();
                 String[] part = paths.split("/");
-                if(part.length == 3) {
+                if (part.length == 3) {
                     int id = Integer.parseInt(part[2]);
                     Task task = taskManager.getTaskById(id);
                     if (task == null) {

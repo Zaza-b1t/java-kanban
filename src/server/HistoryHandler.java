@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
     private final TaskManager taskManager;
-    private  final Gson gson = new GsonBuilder()
+    private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .registerTypeAdapter(Duration.class, new DurationAdapter())
             .setPrettyPrinting()
@@ -26,7 +26,7 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
 
-        if(method.equals("GET")) {
+        if (method.equals("GET")) {
             String json = gson.toJson(taskManager.getHistory());
             sendText(exchange,json);
         } else {
