@@ -13,5 +13,6 @@ public class GsonConfig {
             .setPrettyPrinting()
             .create();
 
-    private GsonConfig() {}
+    private GsonConfig() {
+    }
 }
