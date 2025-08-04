@@ -1,19 +1,18 @@
-package TaskManager;
+package taskmanager;
 
-import Task.Subtask;
-import Task.Task;
-import Task.Epic;
+import task.Subtask;
+import task.Task;
+import task.Epic;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
 
-    Task createTask(Task task);
+    Task createTask(Task task) throws TaskOverlapException;
 
     Task getTaskById(int id);
 
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
     void deleteTaskById(int id);
 
@@ -25,7 +24,7 @@ public interface TaskManager {
 
     Epic getEpicById(int id);
 
-    ArrayList<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
     void deleteEpicById(int id);
 
@@ -33,11 +32,11 @@ public interface TaskManager {
 
     void updateEpic(Epic epic);
 
-    Subtask createSubtask(Subtask subtask);
+    Subtask createSubtask(Subtask subtask) throws TaskOverlapException;
 
     Subtask getSubtaskById(int id);
 
-    ArrayList<Subtask> getAllSubtasks();
+    List<Subtask> getAllSubtasks();
 
     void deleteSubtaskById(int id);
 
@@ -45,9 +44,11 @@ public interface TaskManager {
 
     void updateSubtask(Subtask subtask);
 
-    ArrayList<Subtask> getSubtasksOfEpic(int epicId);
+    List<Subtask> getSubtasksOfEpic(int epicId);
 
     void updateEpicStatus(int epicId);
 
     List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
 }
