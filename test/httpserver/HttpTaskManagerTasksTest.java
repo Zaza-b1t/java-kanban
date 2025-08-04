@@ -1,23 +1,10 @@
 package httpserver;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import managers.Managers;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import server.DurationAdapter;
-import server.HttpTaskServer;
-import server.LocalDateTimeAdapter;
 import task.Status;
 import task.Task;
-import taskmanager.InMemoryTaskManager;
-import taskmanager.TaskManager;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -26,29 +13,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class HttpTaskManagerTasksTest {
+public class HttpTaskManagerTasksTest extends BaseHttpTest{
 
-    TaskManager manager = new InMemoryTaskManager(Managers.getDefaultHistory());
-    HttpTaskServer taskServer = new HttpTaskServer(manager);
-    Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .registerTypeAdapter(Duration.class, new DurationAdapter())
-            .create();
-
-    public HttpTaskManagerTasksTest() throws IOException {
-    }
-
-    @BeforeEach
-    public void setUp() {
-        manager.deleteAllTasks();
-        manager.deleteAllSubtasks();
-        manager.deleteAllEpics();
-        taskServer.start();
-    }
-
-    @AfterEach
-    public void shutDown() {
-        taskServer.stop();
+    public HttpTaskManagerTasksTest() {
     }
 
     @Test
@@ -57,18 +24,7 @@ public class HttpTaskManagerTasksTest {
                 Status.NEW, Duration.ofMinutes(5), LocalDateTime.now());
 
         String taskJson = gson.toJson(task);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(201, response.statusCode());
-
+        assertEquals(HttpStatus.CREATED.getCode(), sendPost(TASKS_URI,taskJson).statusCode());
 
         List<Task> tasksFromManager = manager.getAllTasks();
 
@@ -82,22 +38,11 @@ public class HttpTaskManagerTasksTest {
         Task task = new Task(0, "Test 3", "Get test", Status.NEW, Duration.ofMinutes(5), LocalDateTime.now());
         String taskJson = gson.toJson(task);
 
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks");
-        HttpRequest postRequest = HttpRequest.newBuilder()
-                .uri(url)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .build();
-        client.send(postRequest, HttpResponse.BodyHandlers.ofString());
+        sendPost(TASKS_URI,taskJson);
 
-        HttpRequest getRequest = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
-        HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> getResponse = sendGet(TASKS_URI);
 
-        assertEquals(200, getResponse.statusCode());
+        assertEquals(HttpStatus.OK.getCode(), getResponse.statusCode());
 
         Task[] tasks = gson.fromJson(getResponse.body(), Task[].class);
         assertEquals(1, tasks.length);
@@ -109,24 +54,11 @@ public class HttpTaskManagerTasksTest {
         Task task = new Task(0, "Test delete", "Desc", Status.NEW, Duration.ofMinutes(5), LocalDateTime.now());
         String taskJson = gson.toJson(task);
 
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks");
-        HttpRequest postRequest = HttpRequest.newBuilder()
-                .uri(url)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .build();
-        client.send(postRequest, HttpResponse.BodyHandlers.ofString());
+        sendPost(TASKS_URI,taskJson);
 
         int id = manager.getAllTasks().getFirst().getId();
 
-        HttpRequest deleteRequest = HttpRequest.newBuilder()
-                .uri(URI.create(url + "/" + id))
-                .DELETE()
-                .build();
-        HttpResponse<String> deleteResponse = client.send(deleteRequest, HttpResponse.BodyHandlers.ofString());
-
-        assertEquals(200, deleteResponse.statusCode());
+        assertEquals(HttpStatus.OK.getCode(), sendDelete(TASKS_URI,id).statusCode());
         assertEquals(0, manager.getAllTasks().size());
     }
 }
